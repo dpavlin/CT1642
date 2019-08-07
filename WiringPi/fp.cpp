@@ -43,11 +43,12 @@ void btnPress() {
 #include <iostream>
 #include <string>
 
-enum DisplayMode { Number, Time };
+enum DisplayMode { Number, Time, Chars };
 DisplayMode display_mode = Number;
 
 int display_number = 0;
 int display_time[] = { 23, 33 };
+char display_chars[4] = { 'b', 'e', 'e', 'f' };
 
 #include <signal.h>
 #include <libconfig.h++>
@@ -89,6 +90,16 @@ void sig_handler(int signum) {
 			cerr << "No 'time_hour' or 'time_min' setting in configuration file." << endl;
 		}
 
+		try {
+			string chars = cfg.lookup("chars");
+			cout << "chars=" << chars << endl << endl;
+			for(int i=0; i<=3; i++)
+				display_chars[i] = chars[i];
+			display_mode = Chars;
+		} catch(const SettingNotFoundException &nfex) {
+			cerr << "No 'chars' setting in configuration file." << endl;
+		}
+
 	}
 }
 
@@ -128,6 +139,8 @@ int main (void)
 		ledDriver.showNumber(display_number);
 	} else if ( display_mode == Time ) {
 		ledDriver.showTime(display_time[0],display_time[1]);
+	} else if ( display_mode == Chars ) {
+		ledDriver.showChars(display_chars[0],display_chars[1],display_chars[2],display_chars[3]);
 	}
 
 	// button pressed
