@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -I.
-LDLIBS = -lwiringPi
+LDLIBS = -lwiringPi -lconfig++
 
 HEADERS = CT1642.h
 OBJECTS = fp.o CT1642.o

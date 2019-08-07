@@ -40,12 +40,70 @@ void btnPress() {
 //  interrupts();
 }
 
+#include <iostream>
+#include <string>
+
+enum DisplayMode { Number, Time };
+DisplayMode display_mode = Number;
+
+int display_number = 0;
+int display_time[] = { 23, 33 };
+
+#include <signal.h>
+#include <libconfig.h++>
+
+using namespace std;
+using namespace libconfig;
+
+void sig_handler(int signum) {
+	std::cout << "signum=" << signum << std::endl;
+	if ( signum == SIGUSR1 ) {
+		Config cfg;
+
+		try {
+			cfg.readFile("lcd.cfg");
+		} catch(const FileIOException &fioex) {
+			std::cerr << "I/O error while reading file." << std::endl;
+		} catch(const ParseException &pex) {
+			std::cerr << "Parse error at " << pex.getFile() << ":" << pex.getLine()
+				<< " - " << pex.getError() << std::endl;
+		}
+
+		try {
+			int number = cfg.lookup("number");
+			cout << "number=" << number << endl << endl;
+			display_number = number;
+			display_mode = Number;
+		} catch(const SettingNotFoundException &nfex) {
+			cerr << "No 'number' setting in configuration file." << endl;
+		}
+
+		try {
+			int hour = cfg.lookup("time_hour");
+			int min  = cfg.lookup("time_min");
+			cout << "time=" << hour << ":" << min << endl << endl;
+			display_time[0] = hour;
+			display_time[1] = min;
+			display_mode = Time;
+		} catch(const SettingNotFoundException &nfex) {
+			cerr << "No 'time_hour' or 'time_min' setting in configuration file." << endl;
+		}
+
+	}
+}
+
+#include <sys/types.h>
+#include <unistd.h>
+
 int main (void)
 {
 
+	// register signals for configuration
+	signal(SIGUSR1, sig_handler);
+
   wiringPiSetupGpio(); // BCM pin numbers, but allready set in ledDriver constructor
 
-  printf ("CT1642 Front-panel for Raspberry Pi\n") ;
+  printf ("CT1642 Front-panel for Raspberry Pi to reload config use: kill -SIGUSR1 %d\n", getpid()) ;
 
   // IC CT1642 Key Interrupt. Recomended Rising Edge.
   //attachInterrupt(digitalPinToInterrupt(KEY_PIN), btnPress, RISING);
@@ -66,7 +124,11 @@ int main (void)
 	// Display the number of the button pressed on the last digit
 	//ledDriver.showSingle(key_pressed,4);
 
-	ledDriver.showNumber(8888); // light up all digits
+	if ( display_mode == Number ) {
+		ledDriver.showNumber(display_number);
+	} else if ( display_mode == Time ) {
+		ledDriver.showTime(display_time[0],display_time[1]);
+	}
 
 	// button pressed
 	if (btnPressed) {
