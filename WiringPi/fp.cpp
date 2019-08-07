@@ -52,26 +52,30 @@ int main (void)
   wiringPiISR(KEY_PIN, INT_EDGE_RISING, &btnPress);
 
   // Set Persistence of Vision Delay for the Display
-  ledDriver.setPovDelay(15);
+  ledDriver.setPovDelay(2); // default = 2
 
   btnPressed = false;
   key_pressed = 0;
 
-  for (;;)
-  {
-	  // Display the number of the button pressed on the last digit
-	  ledDriver.showSingle(key_pressed,4);
+  for (;;) {
 
-	  // button pressed
-	  if (btnPressed) {
-	    // Write result to serial
+	/* This is thight inner loop to refresh display, loop() in Arduino
+	 * We need to call ledDriver once to refresh display
+	 * */
+
+	// Display the number of the button pressed on the last digit
+	//ledDriver.showSingle(key_pressed,4);
+
+	ledDriver.showNumber(8888); // light up all digits
+
+	// button pressed
+	if (btnPressed) {
 	    printf("Button press read: %d 0x%02x\n", key_pressed, key_pressed);
 
-	    // Debounce Serial
+	    // Debounce
 	    btnPressed = false;
-	  }
+	}
 
-	  delay(10);
   }
   return 0 ;
 }
