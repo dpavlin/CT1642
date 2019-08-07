@@ -59,6 +59,8 @@ using namespace libconfig;
 void sig_handler(int signum) {
 	std::cout << "signum=" << signum << std::endl;
 	if ( signum == SIGUSR1 ) {
+		ledDriver.clear(); // blank display so we don't leave random digit light up
+
 		Config cfg;
 
 		try {
