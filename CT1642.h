@@ -123,6 +123,7 @@ class CT1642 {
 		void showChars(char char1, char char2, char char3, char char4);
 		void showTime(int hours, int minutes);
 		int getKeyCode(void);
+		void clear(void);
 
     private:
         int _DATA_Pin;
@@ -155,7 +156,6 @@ class CT1642 {
 		void setPreamble(void);
 		void setChar(byte ledChar);
 		void latchDigit(void);
-		void clear(void);
 		byte getCharByte(char character);
 
 };
