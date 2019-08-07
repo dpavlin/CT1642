@@ -1,0 +1,8 @@
+# uncomment lines to change display and send kill -SIGUSR1
+
+number=1234
+
+#time_hour=10
+#time_min=41
+
+#chars="bEEF"
