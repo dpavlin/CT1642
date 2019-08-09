@@ -78,7 +78,7 @@ void sig_handler(int signum) {
 			display_number = number;
 			display_mode = Number;
 		} catch(const SettingNotFoundException &nfex) {
-			cerr << "No 'number' setting in configuration file." << endl;
+			//cerr << "No 'number' setting in configuration file." << endl;
 		}
 
 		try {
@@ -89,7 +89,7 @@ void sig_handler(int signum) {
 			display_time[1] = min;
 			display_mode = Time;
 		} catch(const SettingNotFoundException &nfex) {
-			cerr << "No 'time_hour' or 'time_min' setting in configuration file." << endl;
+			//cerr << "No 'time_hour' or 'time_min' setting in configuration file." << endl;
 		}
 
 		try {
@@ -99,9 +99,16 @@ void sig_handler(int signum) {
 				display_chars[i] = chars[i];
 			display_mode = Chars;
 		} catch(const SettingNotFoundException &nfex) {
-			cerr << "No 'chars' setting in configuration file." << endl;
+			//cerr << "No 'chars' setting in configuration file." << endl;
 		}
 
+		try {
+			int delay = cfg.lookup("delay");
+			cout << "delay=" << delay << endl << endl;
+			ledDriver.setPovDelay( delay );
+		} catch(const SettingNotFoundException &nfex) {
+			//cerr << "No 'chars' setting in configuration file." << endl;
+		}
 	}
 }
 
@@ -123,7 +130,7 @@ int main (void)
   wiringPiISR(KEY_PIN, INT_EDGE_RISING, &btnPress);
 
   // Set Persistence of Vision Delay for the Display
-  ledDriver.setPovDelay(2); // default = 2
+  ledDriver.setPovDelay(5); // default = 2
 
   btnPressed = false;
   key_pressed = 0;
