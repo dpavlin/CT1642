@@ -345,7 +345,7 @@ void CT1642::showTime(int hours, int minutes){ // time
 	int hd,md;
 	int hd1, hd2, md1, md2;
 	
-	if (hours >= 10 && hours <= 23) {
+	if (hours >= 10) {
 		
 		hd = 2;
 		
@@ -362,7 +362,7 @@ void CT1642::showTime(int hours, int minutes){ // time
 		hours = 0;
 	}
 	
-	if (minutes >= 10 && minutes <= 59) {
+	if (minutes >= 10) {
 		md = 2;
 		
 		// Get tens
