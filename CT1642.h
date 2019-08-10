@@ -124,6 +124,7 @@ class CT1642 {
 		void showTime(int hours, int minutes);
 		int getKeyCode(void);
 		void clear(void);
+		void write(byte bitChar, int digitNo);
 
     private:
         int _DATA_Pin;
@@ -150,7 +151,6 @@ class CT1642 {
 			8, /*Key on pin Q2*/
 			9 /*Does not exist*/
 		};
-		void write(byte bitChar, int digitNo);
 		byte getDigitAddress(int digitNo);
 		void setUpDigit(byte digitNo);
 		void setPreamble(void);

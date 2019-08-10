@@ -50,6 +50,20 @@ int display_number = 0;
 int display_time[] = { 23, 33 };
 char display_chars[4] = { 'b', 'e', 'e', 'f' };
 
+void test_led_segments(int digit_delay) {
+  for( int digit = 1; digit <= 4; digit++ ) {
+	int send = 1;
+	printf("test digit %2d ", digit);
+	for( int bit = 0; bit <=7; bit++ ) {
+		  ledDriver.write( send , digit);
+		  send = send << 1;
+		  printf("%d 0x%02x ", digit, bit, send);
+		  delay(digit_delay);
+	}
+	printf("\n");
+  }
+}
+
 #include <signal.h>
 #include <libconfig.h++>
 
@@ -107,7 +121,14 @@ void sig_handler(int signum) {
 			cout << "delay=" << delay << endl << endl;
 			ledDriver.setPovDelay( delay );
 		} catch(const SettingNotFoundException &nfex) {
-			//cerr << "No 'chars' setting in configuration file." << endl;
+			//cerr << "No 'delay' setting in configuration file." << endl;
+		}
+
+		try {
+			int test = cfg.lookup("test");
+			cout << "test=" << test << endl << endl;
+			test_led_segments( test );
+		} catch(const SettingNotFoundException &nfex) {
 		}
 	}
 }
@@ -131,6 +152,8 @@ int main (void)
 
   // Set Persistence of Vision Delay for the Display
   ledDriver.setPovDelay(5); // default = 2
+
+  test_led_segments(50);
 
   btnPressed = false;
   key_pressed = 0;
