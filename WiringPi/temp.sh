@@ -5,7 +5,7 @@ killall fp || true
 # kill me and all children on ctrl+c
 trap "trap - TERM && kill -- -$$" INT TERM EXIT
 
-./fp &
+nice -20 ./fp &
 sleep 1
 pid=$!
 echo "fp pid: $pid"
