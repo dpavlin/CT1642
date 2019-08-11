@@ -68,8 +68,6 @@ CT1642::CT1642(int CLK_Pin, int DATA_Pin, int KEY_Pin){
 	_CLOCK_Pin = CLK_Pin;
 	_KEY_Pin = KEY_Pin;
 
-	wiringPiSetupGpio(); // FIXME needs to be called before first pinMode
-
 	pinMode(_DATA_Pin, OUTPUT);
 	digitalWrite(_DATA_Pin, LOW);
 	pinMode(_CLOCK_Pin, OUTPUT);

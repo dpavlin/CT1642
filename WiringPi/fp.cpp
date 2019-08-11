@@ -13,7 +13,9 @@
 #define KEY_PIN   23   // Make sure this is an Interrupt PIN
 
 // Setup an instance to communicate the CT1642 IC (including key scan function).
-CT1642 ledDriver(CLOCK_PIN, DATA_PIN, KEY_PIN);
+//CT1642 ledDriver(CLOCK_PIN, DATA_PIN, KEY_PIN);
+// FIXME if we init class here, wiringpi is not yet initilized
+CT1642 *ledDriver;
 
 // Variables for the Interrupt
 // and Button Debouncing
@@ -32,7 +34,7 @@ void btnPress() {
     if (!btnPressed) {
       btnPressed = true;
       // Get the key code from the CT1642
-      key_pressed = ledDriver.getKeyCode();
+      key_pressed = ledDriver->getKeyCode();
     }
     last_micros = micros();
   }
@@ -55,7 +57,7 @@ void test_led_segments(int digit_delay) {
 	int send = 1;
 	printf("test digit %2d ", digit);
 	for( int bit = 0; bit <=7; bit++ ) {
-		  ledDriver.write( send , digit);
+		  ledDriver->write( send , digit);
 		  send = send << 1;
 		  printf("%d 0x%02x ", digit, bit, send);
 		  delay(digit_delay);
@@ -73,7 +75,7 @@ using namespace libconfig;
 void sig_handler(int signum) {
 	std::cout << "signum=" << signum << std::endl;
 	if ( signum == SIGUSR1 ) {
-		ledDriver.clear(); // blank display so we don't leave random digit light up
+		ledDriver->clear(); // blank display so we don't leave random digit light up
 
 		Config cfg;
 
@@ -119,7 +121,7 @@ void sig_handler(int signum) {
 		try {
 			int delay = cfg.lookup("delay");
 			cout << "delay=" << delay << endl << endl;
-			ledDriver.setPovDelay( delay );
+			ledDriver->setPovDelay( delay );
 		} catch(const SettingNotFoundException &nfex) {
 			//cerr << "No 'delay' setting in configuration file." << endl;
 		}
@@ -150,8 +152,10 @@ int main (void)
   //attachInterrupt(digitalPinToInterrupt(KEY_PIN), btnPress, RISING);
   wiringPiISR(KEY_PIN, INT_EDGE_RISING, &btnPress);
 
+  ledDriver = new CT1642(CLOCK_PIN, DATA_PIN, KEY_PIN); // init, after wiringPiSetup
+
   // Set Persistence of Vision Delay for the Display
-  ledDriver.setPovDelay(5); // default = 2
+  ledDriver->setPovDelay(5); // default = 2
 
   test_led_segments(50);
 
@@ -165,14 +169,14 @@ int main (void)
 	 * */
 
 	// Display the number of the button pressed on the last digit
-	//ledDriver.showSingle(key_pressed,4);
+	//ledDriver->showSingle(key_pressed,4);
 
 	if ( display_mode == Number ) {
-		ledDriver.showNumber(display_number);
+		ledDriver->showNumber(display_number);
 	} else if ( display_mode == Time ) {
-		ledDriver.showTime(display_time[0],display_time[1]);
+		ledDriver->showTime(display_time[0],display_time[1]);
 	} else if ( display_mode == Chars ) {
-		ledDriver.showChars(display_chars[0],display_chars[1],display_chars[2],display_chars[3]);
+		ledDriver->showChars(display_chars[0],display_chars[1],display_chars[2],display_chars[3]);
 	}
 
 	// button pressed
