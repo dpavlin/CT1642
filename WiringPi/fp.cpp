@@ -8,9 +8,9 @@
 #include <CT1642.h>
 
 // Pins according to the schematic
-#define CLOCK_PIN 24
-#define DATA_PIN  25
-#define KEY_PIN   23   // Make sure this is an Interrupt PIN
+#define KEY_PIN   17   // Make sure this is an Interrupt PIN
+#define CLOCK_PIN 27
+#define DATA_PIN  22
 
 // Setup an instance to communicate the CT1642 IC (including key scan function).
 //CT1642 ledDriver(CLOCK_PIN, DATA_PIN, KEY_PIN);
