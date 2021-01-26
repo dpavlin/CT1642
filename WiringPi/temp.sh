@@ -1,11 +1,13 @@
 #!/bin/sh -e
 
+cd /home/pi/CT1642/WiringPi/
+
 killall fp || true
 
 # kill me and all children on ctrl+c
 trap "trap - TERM && kill -- -$$" INT TERM EXIT
 
-nice -20 ./fp &
+nice -n -20 ./fp &
 sleep 1
 pid=$!
 echo "fp pid: $pid"
